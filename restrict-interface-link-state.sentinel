@@ -1,0 +1,29 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+# Get all Ethernet Interfaces
+allEthInt = plan.find_resources("panos_ethernet_interface")
+
+# Validate Security Rule Groups
+violatingEthIntCount = 0
+
+  # Filter to violating rules that contain "up" in link_state
+  # Warnings will not be printed for violations since the last parameter is false
+  violatingRules = plan.filter_attribute_is_value(allEthInt,
+                 "link_state", "up", false)
+
+  # Print violation messages
+  if length(violatingRules["messages"]) > 0 {
+    violatingEthIntCount += 1
+    print("Ethernet Interface Rule Violation:", allEthInt, "has at least one interface",
+          "with link_state containing \"up\".")
+    plan.print_violations(violatingRules["messages"], "Rule")
+  }  // end if
+
+#} // end for interfaces
+
+# Main rule
+main = rule {
+  violatingEthIntCount is 0
+}

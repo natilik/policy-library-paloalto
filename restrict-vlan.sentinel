@@ -1,0 +1,37 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+# Get all VLANs
+allVlans = plan.find_resources("panos_vlan_interface")
+
+#List of VLANs not allowed to be provisioned
+violatingVlanList = [
+  "vlan.12",
+  "vlan.10",
+  "vlan.118",
+  "vlan.248",
+]
+
+# Validate Security Rule Groups
+violatingVlanCount = 0
+
+  # Filter to violating rules that contain "layer2" in mode
+  # Warnings will not be printed for violations since the last parameter is false
+  violatingRules = plan.filter_attribute_in_list(allVlans,
+                 "name", violatingVlanList, false)
+
+  # Print violation messages
+  if length(violatingRules["messages"]) > 0 {
+    violatingVlanCount += 1
+    print("VLAN Rule Violation:", allVlans, "has at least one VLAN",
+          "with ID from disallowed list \violatingVlanList\".")
+    plan.print_violations(violatingRules["messages"], "Rule")
+  }  // end if
+
+#} // end for Vlans
+
+# Main rule
+main = rule {
+  violatingVlanCount is 0
+}

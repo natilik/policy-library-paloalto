@@ -1,0 +1,27 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+# Get all Static Routes
+allSRGs = plan.find_resources("panos_static_route_ipv4")
+
+# Validate Security Rule Groups
+violatingSRCount = 0
+
+# Filter to violating rules that contain "0.0.0.0/0" in destination_addresses
+# Warnings will not be printed for violations since the last parameter is false
+violatingRules = plan.filter_attribute_contains_items_from_list(allSTATs,
+                 "statics", ["0.0.0.0/0"], false)
+
+  # Print violation messages
+  if length(violatingRules["messages"]) > 0 {
+    violatingSRCount += 1
+    print("SR Rule Violation:", "static route", "has at least one rule",
+          "with route containing \"0.0.0.0/0\".")
+    plan.print_violations(violatingRules["messages"], "Rule")
+  }  // end if
+
+# Main rule
+main = rule {
+  violatingSRCount is 0
+}

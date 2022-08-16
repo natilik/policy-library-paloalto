@@ -1,0 +1,26 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+#Get all Ethernet Interfaces
+allEthInt = plan.find_resources("panos_ethernet_interface")
+
+# Validate Ethernet Interfaces
+violatingEthIntCount = 0
+
+# Filter to violating rules that do not contain a comment for the
+# application object
+violatingRules = plan.filter_attribute_is_value(allEthInt, "comment", "null", false)
+
+# Print Violation Messages
+if length (violatingRules["messages"]) > 0 {
+  violatingEthIntCount += 1
+  print("Ethernet Interfaces:", allEthInt, "has at least one Ethernet Interface",
+        "with no comment.")
+  plan.print_violations(violatingRules["messages"], "Rule")
+} // end if
+
+# Main Rule
+main = rule {
+  violatingEthIntCount is 0
+}

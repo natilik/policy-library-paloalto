@@ -1,0 +1,33 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+# Get all Security Groups
+allSZs = plan.find_resources("panos_zone")
+
+# Validate Security Rule Groups
+violatingSZsCount = 0
+#for allSZs as zones, szs {
+
+  # Find the rules of the current SZs
+  #rules = plan.find_blocks(szs, "rule")
+
+  # Filter to violating rules that contain "layer2" in mode
+  # Warnings will not be printed for violations since the last parameter is false
+  violatingRules = plan.filter_attribute_is_value(allSZs,
+                 "mode", "layer2", false)
+
+  # Print violation messages
+  if length(violatingRules["messages"]) > 0 {
+    violatingSZsCount += 1
+    print("SZs Rule Violation:", allSZs, "has at least one zone",
+          "with mode containing \"layer2\".")
+    plan.print_violations(violatingRules["messages"], "Rule")
+  }  // end if
+
+#} // end for SZs
+
+# Main rule
+main = rule {
+  violatingSZsCount is 0
+}

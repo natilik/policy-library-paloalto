@@ -1,0 +1,33 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+# Get all NAT Rule Groups
+allNATs = plan.find_resources("panos_nat_rule_group")
+
+# Validate Security Rule Groups
+violatingNATsCount = 0
+for allNATs as address, nat {
+
+  # Find the rules of the current NAT
+  rules = plan.find_blocks(nat, "original_packet")
+
+  # Filter to violating rules that contain something....TODO!
+  # Warnings will not be printed for violations since the last parameter is false
+  violatingRules = plan.filter_attribute_contains_items_from_list(rules,
+                 "destination_addresses", ["any","0.0.0.0/0"], false)
+
+  # Print violation messages
+  if length(violatingRules["messages"]) > 0 {
+    violatingNATsCount += 1
+    print("NAT Rule Violation:", address, "has at least one rule",
+          "with destination_addresses containing \"any or 0.0.0.0/0\".")
+    plan.print_violations(violatingRules["messages"], "Rule")
+  }  // end if
+
+} // end for NATs
+
+# Main rule
+main = rule {
+  violatingNATsCount is 0
+}

@@ -1,0 +1,39 @@
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
+
+#Get all Application Objects
+allAppObj = plan.find_resources("panos_application_object")
+
+# Validate Application Objects
+violatingAppObjCount = 0
+violatingAppObjPreCount = 0
+
+# Filter to violating rules that do not contain a description for the
+# application object
+violatingRules = plan.filter_attribute_is_value(allAppObj, "description", "null", false)
+
+# Filter to violating rules that do not have "-appobject" as a suffix for
+# application objects
+violatingSRules = plan.filter_attribute_does_not_have_suffix(allAppObj, "name", "-appobject", false)
+
+# Print Violation Messages
+if length (violatingRules["messages"]) > 0 {
+  violatingAppObjCount += 1
+  print("App Objects:", allAppObj, "has at least one Application Object",
+        "with no Description.")
+  plan.print_violations(violatingRules["messages"], "Rule")
+
+} else {
+  if length (violatingSRules["messages"]) > 0 {
+    violatingAppObjPreCount += 1
+    print("App Objects:", allAppObj, "has at least one Application Object",
+          "without \"-appobject\"suffix.")
+    plan.print_violations(violatingSRules["messages"], "Rule")
+  }
+}
+
+# Main Rule
+main = rule {
+  violatingAppObjCount + violatingAppObjPreCount is 0
+}
