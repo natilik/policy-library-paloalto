@@ -19,3 +19,5 @@ More tests will be added, such as static route restriction and NAT rules, as an 
 3. restict-interface-mtu
 
 But these are not complete. Within the sentinel.hcl file, these tests have been commented out.
+
+The `enforcement_level` is not required and the Terraform Registry ignores this information, but it is there for completeness.
