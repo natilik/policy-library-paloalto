@@ -12,4 +12,10 @@ The tests are basic but ensure that best policies are adhered to upon creating c
 
 These tests all require the `import "tfplan-fuctions"` to be added.
 
-More tests will be added, such as static route restriction and NAT rules, as an example.
+More tests will be added, such as static route restriction and NAT rules, as an example. The files for these have been uploaded:
+
+1. restrict-static-routes
+2. restrict-nat-rules
+3. restict-interface-mtu
+
+But these are not complete. Within the sentinel.hcl file, these tests have been commented out.
