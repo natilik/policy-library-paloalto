@@ -1,0 +1,1 @@
+Ensure that Security Zones are not Layer 2

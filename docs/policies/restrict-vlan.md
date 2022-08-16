@@ -1,0 +1,1 @@
+Ensure that reserved or VLANs that are not to be used are not deployed.

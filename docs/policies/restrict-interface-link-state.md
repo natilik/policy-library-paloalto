@@ -1,0 +1,1 @@
+Ensure that when deploying new interfaces the `link_state ` is not automatically set to "up"

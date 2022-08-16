@@ -1,0 +1,1 @@
+Ensure that destination addresses do not contain the word "any" or "0.0.0.0/0"
