@@ -7,7 +7,7 @@ The tests are basic but ensure that best policies are adhered to upon creating c
 1. Restrict Source Address Rules - Ensure that source addresses do not contain the word "any" or "0.0.0.0/0"
 2. Restrict Destination Address Rules - Ensure that destination addresses do not contain the word "any" or "0.0.0.0/0"
 3. Restrict Layer 2 Security Zones - Ensure that Security Zones are not Layer 2
-4. Restrict Interface Line State - Ensure that when deploying new interfaces the `link_state ` is not automatically set to "up"
+4. Restrict Interface Link State - Ensure that when deploying new interfaces the `link_state ` is not automatically set to "up"
 5. Restrict VLAN - Ensure that reserved or VLANs that are not to be used are not deployed.
 
 These tests all require the `import "tfplan-fuctions"` to be added.
