@@ -1,4 +1,4 @@
-# policy-library-paloalto
+# Palo Alto Sentinel Policies for Terraform
 
 These Sentinel Policies are specific to Palo Alto firewalls. These do not cover Panorama at this current time.
 
